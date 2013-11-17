@@ -33,7 +33,17 @@ Cycle='86400'   #86400 is 1 day
 Dict=[{'name':'cpu_load','graphid':'2','cycle':Cycle,'date':date},
                 {'name':'network_used','graphid':'4','cycle':Cycle,'date':date},
                 {'name':'disk_used','graphid':'5','cycle':Cycle,'date':date},
-                {'name':'cpu_used','graphid':'3','cycle':Cycle,'date':date}]
+                {'name':'cpu_used','graphid':'3','cycle':Cycle,'date':date}]  #is repost project
+
+#e.g
+#Dict = [{{'name':'cpu_load','graphid':'2','cycle':Cycle,'date':date}]  #A figure
+
+'''Dict = [{{'name':'cpu_load','graphid':'2','cycle':Cycle,'date':date},
+            {'name':'network_used','graphid':'4','cycle':Cycle,'date':date},
+            {'name':'network_used','graphid':'4','cycle':Cycle,'date':date},
+            {'name':'network_used','graphid':'4','cycle':Cycle,'date':date}]  #More than one figure'''
+
+
 
 
 
