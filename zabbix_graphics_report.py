@@ -15,25 +15,25 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
-zabbix='http://192.168.2.21'
-zabbix_user='admin'
-zabbix_passwd='zabbix'
-zabbix_version='1.8'  #suport 1.8 and 2.03
-smtpserver='smtp.qq.com'
-smtpuser='hasdream'
-smtppasswd='test'
-receiver='test@qq.com'
-subject='zabbix Graphics repost'
-image_directory='/home/finy/zabbix'
-date=os.popen('date +%Y%m%d%H%M%S').read().replace('\n','')
+zabbix='http://192.168.2.21'   #zabbix login address
+zabbix_user='admin'            #zabbix user
+zabbix_passwd='zabbix'         #zabbix password
+zabbix_version='1.8'           #suport 1.8 and 2.03
+smtpserver='smtp.qq.com'       #SMTP server, QQ(open SMTP server)
+smtpuser='hasdream'            #SMTP user
+smtppasswd='test'              #SMTP password
+receiver='test@qq.com'         #receiver address
+subject='zabbix Graphics repost'#Mail Subject
+image_directory='/home/finy/zabbix' #images save address
+date=os.popen('date +%Y%m%d%H%M%S').read().replace('\n','') #get date
 
 
-Cycle='86400'   #86400 is 1 day 
+Cycle='86400'   #86400 is 1 day  and 86400 x 7 is weeks, 86400 x 30 is month
 
 Dict=[{'name':'cpu_load','graphid':'2','cycle':Cycle,'date':date},
                 {'name':'network_used','graphid':'4','cycle':Cycle,'date':date},
                 {'name':'disk_used','graphid':'5','cycle':Cycle,'date':date},
-                {'name':'cpu_used','graphid':'3','cycle':Cycle,'date':date}]  #is repost project
+                {'name':'cpu_used','graphid':'3','cycle':Cycle,'date':date}]  #is repost project 
 
 #e.g
 #Dict = [{{'name':'cpu_load','graphid':'2','cycle':Cycle,'date':date}]  #A figure
