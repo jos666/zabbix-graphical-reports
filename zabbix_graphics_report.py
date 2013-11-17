@@ -15,6 +15,32 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
+zabbix='http://192.168.2.21'
+zabbix_user='admin'
+zabbix_passwd='zabbix'
+zabbix_version='1.8'  #suport 1.8 and 2.03
+smtpserver='smtp.qq.com'
+smtpuser='jos666'
+smtppasswd='test'
+receiver='test@qq.com'
+subject='zabbix Graphics repost'
+image_directory='/home/finy/zabbix'
+date=os.popen('date +%Y%m%d%H%M%S').read().replace('\n','')
+
+
+Cycle='86400'   #86400 is 1 day 
+
+Dict=[{'name':'cpu_load','graphid':'2','cycle':Cycle,'date':date},
+                {'name':'network_used','graphid':'4','cycle':Cycle,'date':date},
+                {'name':'disk_used','graphid':'5','cycle':Cycle,'date':date},
+                {'name':'cpu_used','graphid':'3','cycle':Cycle,'date':date}]
+
+
+
+
+
+
+
 class parameter:
     def __init__(self,**param):
         self.param = param
@@ -46,7 +72,12 @@ class Report_Generation(parameter):
         #for key in Dict.keys():
         Image_Url=self.web+"/chart2.php?graphid=%s&&width=600&period=%s&stime=%s&sid=%s"%(Dict['graphid'],Dict['cycle'],Dict['date'],self.sid)
         Openfile=open(directory+'/'+Dict['name']+'.png','w')
-        Openfile.write(urllib2.urlopen(Image_Url).read())
+        try:
+            Openfile.write(urllib2.urlopen(Image_Url).read())
+        except Exception,err:
+                print Image_Url
+                print "download images error ,",err
+                exit()
         Openfile.close()
         return directory + '/' + Dict['name'] + '.png'
 
@@ -99,23 +130,16 @@ class Mail(Mail_par):
         msgRoot['From'] = self.sender
         smtp.sendmail(self.sender, self.receiver, msgRoot.as_string())
         smtp.quit()
-        return msgRoot
 
 
 
 
-
-a=Report_Generation(user='admin',passwd='zabbix',version='1.8',zabbix='http://192.168.2.21')
-Dict=[{'name':'cpu_load','graphid':'2','cycle':'86400','date':'20131116083111'},
-{'name':'network_used','graphid':'4','cycle':'86400','date':'20131116083111'},
-{'name':'disk_used','graphid':'5','cycle':'86400','date':'20131116083111'},
-{'name':'cpu_used','graphid':'3','cycle':'86400','date':'20131116083111'}]
-imagelist=[]
-namelist=[]
-for i in Dict:
-    namelist.append(i['name'])
-    imagelist.append(a.download_image(i,'/home/finy/zabbix'))
-mail=Mail(user='860087477',passwd='findmy0606',smtpserver='smtp.qq.com',receiver='yyj@stucredit.com',subject='zabbix test')
-aaa = mail.Send(namelist,imagelist)
-print imagelist,namelist
-#a=parameter(user='admin',passwd='zabbix',version='1.8',zabbix='http://zabbix.nginx.com')
+if __name__ == '__main__':
+    a=Report_Generation(user=zabbix_user,passwd=zabbix_passwd,version=zabbix_version,zabbix=zabbix)
+    imagelist=[]
+    namelist=[]
+    for i in Dict:
+       namelist.append(i['name'])
+       imagelist.append(a.download_image(i,image_directory))
+    mail=Mail(user=smtpuser,passwd=smtppasswd,smtpserver=smtpserver,receiver=receiver,subject=subject)
+    mail.Send(namelist,imagelist)
