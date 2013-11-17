@@ -78,19 +78,18 @@ class Mail(Mail_par):
         smtp = self.login()
         Centent = ''
         for i in range(len(imagelist)):
-            Centent = Centent + '<h1>%s</h1><br><img src="cid:image%s"><br>'%(namelist[i],str(i+1))
-        print Centent
+            Centent = Centent + '<h1>%s</h1><br><img src="cid:image%s"><br>'%(namelist[i],str(i))
         msgRoot = MIMEMultipart('related')
-        msgtext = MIMEText(Centent)
+        msgtext = MIMEText(Centent,'html','utl8')
         msgRoot.attach(msgtext)
-        images=[]
+        #images=[]
         for i in range(len(imagelist)):
             fp = open(imagelist[i], 'rb')
             msgImage = MIMEImage(fp.read())
             #images = MIMEImage(fp.read())
             #images.append(MIMEImage(fp.read()))
             fp.close()
-            msgImage.add_header('Content-ID', '<image1>')
+            msgImage.add_header('Content-ID', '<image%s>'%str(i))
             msgRoot.attach(msgImage)
             #images.add_header('Content-ID', '<image%s>'%str(i+1))
             #images[i].add_header('Content-ID', '<image%s>'%str(i+1))
@@ -107,10 +106,10 @@ class Mail(Mail_par):
 
 
 a=Report_Generation(user='admin',passwd='zabbix',version='1.8',zabbix='http://192.168.2.21')
-Dict=[{'name':'cpu_load','graphid':'2','cycle':'86400','date':'20131116083111'}]
-#{'name':'network_used','graphid':'4','cycle':'86400','date':'20131116083111'},
-#{'name':'disk_used','graphid':'5','cycle':'86400','date':'20131116083111'},
-#{'name':'cpu_used','graphid':'3','cycle':'86400','date':'20131116083111'}]
+Dict=[{'name':'cpu_load','graphid':'2','cycle':'86400','date':'20131116083111'},
+{'name':'network_used','graphid':'4','cycle':'86400','date':'20131116083111'},
+{'name':'disk_used','graphid':'5','cycle':'86400','date':'20131116083111'},
+{'name':'cpu_used','graphid':'3','cycle':'86400','date':'20131116083111'}]
 imagelist=[]
 namelist=[]
 for i in Dict:
