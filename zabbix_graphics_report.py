@@ -60,9 +60,11 @@ class Report_Generation(parameter):
         urllib2.install_opener(Opener)
         if '1.8' in version:
             req = urllib2.Request(self.web+self.Get_data)
-            html = urllib2.urlopen(req).read()
-            sidre=re.compile('sid=(.*)">Dashboard')
-            sid=re.findall(sidre,html)[0]
+            html = urllib2.urlopen(req)
+            #print str(html.info())
+            for i in str(html.info()).split('\n'):
+                if 'Set-Cookie' in i:
+                        sid=i.split('=')[1].split(";")[0][16:]
         elif '2.0' in version:
             post_data = urllib.urlencode({"autologin":"1","enter":"Sign in","name":self.user,"password":self.passwd})
             req = urllib2.Request(self.web,post_data)
