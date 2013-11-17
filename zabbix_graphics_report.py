@@ -20,7 +20,7 @@ zabbix_user='admin'
 zabbix_passwd='zabbix'
 zabbix_version='1.8'  #suport 1.8 and 2.03
 smtpserver='smtp.qq.com'
-smtpuser='jos666'
+smtpuser='hasdream'
 smtppasswd='test'
 receiver='test@qq.com'
 subject='zabbix Graphics repost'
@@ -50,18 +50,28 @@ class parameter:
         self.web = self.param['zabbix']
         self.header = [('User-agent','Mozilla/4.0 (compatible; MSIE 7.0; Windows NameError 5.1)')]
         self.Get_data = "/index.php?name=%s&password=%s&enter=Enter&login=1"%(self.user,self.passwd)
-        self.sid = self.login()
+        self.sid = self.login(self.zabbix_version)
 
 class Report_Generation(parameter):
-    def login(self):
+    def login(self,version):
         cj = cookielib.CookieJar()
         Opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
         Opener.addheaders = self.header
         urllib2.install_opener(Opener)
-        req = urllib2.Request(self.web+self.Get_data)
-        html = urllib2.urlopen(req).read()
-        sidre=re.compile('sid=(.*)">Dashboard')
-        sid=re.findall(sidre,html)[0]
+        if '1.8' in version:
+            req = urllib2.Request(self.web+self.Get_data)
+            html = urllib2.urlopen(req).read()
+            sidre=re.compile('sid=(.*)">Dashboard')
+            sid=re.findall(sidre,html)[0]
+        elif '2.0' in version:
+            post_data = urllib.urlencode({"autologin":"1","enter":"Sign in","name":self.user,"password":self.passwd})
+            req = urllib2.Request(self.web,post_data)
+            html = urllib2.urlopen(req)
+
+            for i in str(html.info).split('\n'):
+                if 'Set-Cookie' in i:
+                    sid = i.split("=")[1].split(";")[0][16:]
+                    break
         return sid
 
     def download_image(self,Dict,directory):
@@ -117,14 +127,9 @@ class Mail(Mail_par):
         for i in range(len(imagelist)):
             fp = open(imagelist[i], 'rb')
             msgImage = MIMEImage(fp.read())
-            #images = MIMEImage(fp.read())
-            #images.append(MIMEImage(fp.read()))
             fp.close()
             msgImage.add_header('Content-ID', '<image%s>'%str(i))
             msgRoot.attach(msgImage)
-            #images.add_header('Content-ID', '<image%s>'%str(i+1))
-            #images[i].add_header('Content-ID', '<image%s>'%str(i+1))
-            #msgRoot.attach(images)
         msgRoot['Subject'] = self.subject
         msgRoot['To'] = self.receiver
         msgRoot['From'] = self.sender
