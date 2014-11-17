@@ -6,6 +6,7 @@
 
 
 
+import urllib
 import urllib2
 import cookielib
 import re
@@ -30,18 +31,18 @@ date=os.popen('date +%Y%m%d%H%M%S').read().replace('\n','') #get date
 
 Cycle='86400'   #86400 is 1 day  and 86400 x 7 is weeks, 86400 x 30 is month
 
-Dict=[{'name':'cpu_load','graphid':'2','cycle':Cycle,'date':date},
-                {'name':'network_used','graphid':'4','cycle':Cycle,'date':date},
-                {'name':'disk_used','graphid':'5','cycle':Cycle,'date':date},
-                {'name':'cpu_used','graphid':'3','cycle':Cycle,'date':date}]  #is repost project 
+Dict=[{'name':'cpu_load','gid':'2','cycle':Cycle,'date':date},
+                {'name':'network_used','gid':'4','cycle':Cycle,'date':date},
+                {'name':'disk_used','gid':'5','cycle':Cycle,'date':date},
+                {'name':'cpu_used','gid':'3','cycle':Cycle,'date':date}]  #is repost project
 
 #e.g
-#Dict = [{{'name':'cpu_load','graphid':'2','cycle':Cycle,'date':date}]  #A figure
+#Dict = [{{'name':'cpu_load','gid':'2','cycle':Cycle,'date':date}]  #A figure
 
-'''Dict = [{{'name':'cpu_load','graphid':'2','cycle':Cycle,'date':date},
-            {'name':'network_used','graphid':'4','cycle':Cycle,'date':date},
-            {'name':'network_used','graphid':'4','cycle':Cycle,'date':date},
-            {'name':'network_used','graphid':'4','cycle':Cycle,'date':date}]  #More than one figure'''
+'''Dict = [{{'name':'cpu_load','gid':'2','cycle':Cycle,'date':date},
+            {'name':'network_used','gid':'4','cycle':Cycle,'date':date},
+            {'name':'network_used','gid':'4','cycle':Cycle,'date':date},
+            {'name':'network_used','gid':'4','cycle':Cycle,'date':date}]  #More than one figure'''
 
 
 
@@ -75,12 +76,12 @@ class Report_Generation(parameter):
             for i in str(html.info()).split('\n'):
                 if 'Set-Cookie' in i:
                         sid=i.split('=')[1].split(";")[0][16:]
-        elif '2.0' in version:
+        elif '2.' in version:
             post_data = urllib.urlencode({"autologin":"1","enter":"Sign in","name":self.user,"password":self.passwd})
             req = urllib2.Request(self.web,post_data)
             html = urllib2.urlopen(req)
 
-            for i in str(html.info).split('\n'):
+            for i in str(html.info()).split('\n'):
                 if 'Set-Cookie' in i:
                     sid = i.split("=")[1].split(";")[0][16:]
                     break
@@ -92,7 +93,7 @@ class Report_Generation(parameter):
         else:
             os.popen('mkdir %s -p'%directory)
         #for key in Dict.keys():
-        Image_Url=self.web+"/chart2.php?graphid=%s&&width=600&period=%s&stime=%s&sid=%s"%(Dict['graphid'],Dict['cycle'],Dict['date'],self.sid)
+        Image_Url=self.web+"/chart2.php?gid=%s&&width=600&period=%s&stime=%s&sid=%s"%(Dict['gid'],Dict['cycle'],Dict['date'],self.sid)
         Openfile=open(directory+'/'+Dict['name']+'.png','w')
         try:
             Openfile.write(urllib2.urlopen(Image_Url).read())
